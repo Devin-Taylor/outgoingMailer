@@ -1,16 +1,12 @@
-# Import smtplib for our actual email sending function
 import logging
 import smtplib
 import time
-from email import encoders
-from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-# Helper email modules
 from email.mime.text import MIMEText
 
 
 class SMTPSender(object):
-    def __init__(self, email, password, subject=""):
+    def __init__(self, email: str, password: str, subject: str = ""):
         logging.info("Instantiating SMTP server")
         self.sender = email
         self.server = smtplib.SMTP('smtp.gmail.com', 587)
@@ -23,8 +19,8 @@ class SMTPSender(object):
         logging.info("Logging out of SMTP server")
         self.server.quit()
 
-    def send_message(self, message, email):
-        time.sleep(1) # to keep gmail happy
+    def send_message(self, message: str, email: str):
+        time.sleep(1) # to keep gmail happy, breaks if you send ~80 emails/minute so just limit it to at best 60
 
         msg = MIMEMultipart()
         msg['From'] = self.sender

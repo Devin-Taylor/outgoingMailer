@@ -9,26 +9,25 @@ from bs4 import BeautifulSoup
 from Messages import Message
 from Senders import SMTPSender
 
-logging.basicConfig(level=logging.DEBUG)
-
-def load_applicants(filename):
+def load_applicants(filename: str):
     return pd.read_csv(filename)
 
-def load_config(filename):
+def load_config(filename: str):
     with open(filename, "r") as fd:
         config = yaml.load(fd, Loader=yaml.FullLoader)
     return config
 
 @dataclass
 class Tracking:
-    idx: str=0
-    message: str=""
-    sent: bool=False
-    reason: str=""
+    idx: str = 0
+    message: str = ""
+    sent: bool = False
+    reason: str = ""
 
 def main():
     logging.info("Loading config")
     config = load_config("config.yaml")
+
     logging.info("Loading applications")
     applications = load_applicants(config['infile'])
 
@@ -42,7 +41,7 @@ def main():
 
             firstname = applications.iloc[idx, :]['full_name'].split(" ")[0]
             # build base email and introduction
-            message = Message(os.path.join("responses", config['base_email']['filename']))
+            message = Message(os.path.join("responses", config['base_email']['filename']), config['base_email']['start_tag'])
             message.add_component(os.path.join("responses", config['introduction']['filename']), config['introduction']['title'], level="H1", fields=["name"], values=[firstname])
             # check all components corresponding to an individual
             # 1) is the component set to true?
@@ -82,8 +81,10 @@ def main():
 
     except Exception as e:
         # make sure we save progress if anything crashes
+        tracking_messages.append(asdict(message_tracker))
         tracking_messages_df = pd.DataFrame(tracking_messages)
         tracking_messages_df.to_csv("completed.csv")
+        print(tracking_messages_df)
 
 
 
