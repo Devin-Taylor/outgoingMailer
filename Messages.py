@@ -29,7 +29,6 @@ class Message(object):
             if len(fields) != len(values):
                 raise RuntimeError("Replacement fields and values are of different length")
             for idx, field in enumerate(fields):
-                print(field)
                 field_id = paragraph.find(id=field)
                 field_id.contents[0].replace_with(values[idx])
 
