@@ -26,7 +26,7 @@ class Message(object):
         tag.string = text
         self.start_tag.append(tag)
 
-    def add_component(self, filename: str, title: str = None, level: str = "H4", fields: List[str] = None, values: List[str] = None):
+    def add_component(self, filename: str, title: str = None, level: str = "H3", fields: List[str] = None, values: List[str] = None):
         if title is not None:
             self._add_field(title, level)
 
