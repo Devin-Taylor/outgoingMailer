@@ -14,10 +14,10 @@ In order to work the following files need to be generated:
 
 An example of this is as follows:
 
-| idx | full_name | email | accept | travel_applied | travel_granted | travel_denied |
+| idx | full_name | email | accept | travel_applied | travel |
 |---|---|---|---|---|---|---|
-| 1 | John Doe | john.doe@gmail.com | TRUE | TRUE | TRUE | FALSE |
-| 2 | Jane Doe | jane.doe@yahoo.com | TRUE | TRUE | FALSE | TRUE |
+| 1 | John Doe | john.doe@gmail.com | TRUE | TRUE | TRUE |
+| 2 | Jane Doe | jane.doe@yahoo.com | TRUE | TRUE | FALSE |
 
 
 `config.yaml`: defines the relationships between the different fields. Located in the root directory. These must correspond to columns in the `<your_applicants_file>.csv`.
@@ -39,22 +39,17 @@ introduction:
 responses:
     accept:
         title: Application Response
-        filename: accept.html
+        true_filename: accept.html
+        false_filename: accept.html
         conditional: []
-        conflict: []
-    travel_granted:
+    travel:
         title: Travel Grant
-        filename: travel_granted.html
+        true_filename: travel_granted.html
+        false_filename: travel_denied.html
         conditional: [travel_applied]
-        conflict: [travel_denied]
-    travel_denied:
-        title: Travel Grant
-        filename: travel_denied.html
-        conditional: [travel_applied]
-        conflict: [travel_granted]
 ```
 
-The following in a definition of the main fields:
+The following is a definition of the main fields:
 
 | field      | sub field   | description                                                                           |
 |------------|-------------|---------------------------------------------------------------------------------------|
@@ -63,7 +58,6 @@ The following in a definition of the main fields:
 | responses  | -           | all possible independent reponses                                                     |
 |            | title       | title of section in email                                                             |
 |            | conditional | boolean columns in csv file which this field is conditional on (i.e. need to be true) |
-|            | conflicts   | boolean columns in csv file which this field conflicts with if both true              |
 
 `responses/`: directory containing all `.html` files corresponding to the responses defined in `config.yaml`. Located in the root directory. Text must be contained within `<p></p>` braces and can contain any standard HTML formatting.
 

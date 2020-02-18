@@ -41,5 +41,5 @@ class Message(object):
 
         self.start_tag.append(paragraph)
 
-    def to_string(self):
+    def to_string(self) -> str:
         return str(self.email)
