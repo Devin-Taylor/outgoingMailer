@@ -29,24 +29,47 @@ admin:
     email: <outgoing-gmail-address>
     password: <email-account-password>
     email_subject: Your Amazing Conference
-infile: <path/to/your_applicants_file>.csv
 base_email:
     filename: base.html
     start_tag: startpt
 introduction:
-    title: Amazing Conference 2020
+    title:
     filename: introduction.html
+    replace_tags: [name]
+    replace_values: [firstname]
 responses:
     accept:
         title: Application Response
         true_filename: accept.html
-        false_filename: accept.html
+        false_filename: reject.html
         conditional: []
+        conflict: []
+        replace_tags: [profession]
+        replace_values: [profession]
     travel:
         title: Travel Grant
-        true_filename: travel_granted.html
-        false_filename: travel_denied.html
-        conditional: [travel_applied]
+        true_filename: travel_accepted.html
+        false_filename: travel_rejected.html
+        conditional: [travel_applied, accept]
+        conflict: []
+        replace_tags: [sponsor]
+        replace_values: [sponsor]
+    talk:
+        title: Talk
+        true_filename: talk_accepted.html
+        false_filename: talk_rejected.html
+        conditional: [talk_applied, accept]
+        conflict: []
+        replace_tags: [talk_length]
+        replace_values: [talk_length]
+    poster:
+        title: Poster
+        true_filename: poster_accepted.html
+        false_filename: poster_rejected.html
+        conditional: [poster_applied, accept]
+        conflict: []
+        replace_tags: []
+        replace_values: []
 ```
 
 The following is a definition of the main fields:
@@ -71,3 +94,13 @@ Example of `introduction.html`.
     Thank you for applying to the Amazing Conference 2020.
 </p>
 ```
+
+### How to run
+
+* edit recipient emails in `test_applications.csv`
+
+* set gmail account details in config file
+
+* run:
+
+> python main.py -c "test_config.yaml" -r "test_responses" -a "test_applications.csv"
