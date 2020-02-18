@@ -15,7 +15,7 @@ In order to work the following files need to be generated:
 An example of this is as follows:
 
 | idx | full_name | email | accept | travel_applied | travel |
-|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|
 | 1 | John Doe | john.doe@gmail.com | TRUE | TRUE | TRUE |
 | 2 | Jane Doe | jane.doe@yahoo.com | TRUE | TRUE | FALSE |
 
