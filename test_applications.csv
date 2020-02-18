@@ -1,0 +1,13 @@
+idx,firstname,email,accept,profession,travel_applied,travel,talk_applied,talk,talk_length,poster_applied,poster,sponsor
+1,John,<recipiant@provider.com>,TRUE,industry,TRUE,TRUE,FALSE,FALSE,0,FALSE,FALSE,company1
+2,Jane,<recipiant@provider.com>,TRUE,academic,TRUE,FALSE,FALSE,FALSE,0,FALSE,FALSE,company2
+3,John,<recipiant@provider.com>,TRUE,student,FALSE,FALSE,FALSE,FALSE,0,FALSE,FALSE,company3
+4,Jane,<recipiant@provider.com>,FALSE,industry,TRUE,TRUE,FALSE,FALSE,0,FALSE,FALSE,company1
+5,John,<recipiant@provider.com>,FALSE,academic,TRUE,FALSE,FALSE,FALSE,0,FALSE,FALSE,company2
+6,Jane,<recipiant@provider.com>,FALSE,student,FALSE,FALSE,FALSE,FALSE,0,FALSE,FALSE,company3
+7,John,<recipiant@provider.com>,TRUE,industry,FALSE,FALSE,TRUE,TRUE,5,FALSE,FALSE,company1
+8,Jane,<recipiant@provider.com>,TRUE,academic,FALSE,FALSE,TRUE,TRUE,20,FALSE,FALSE,company2
+9,John,<recipiant@provider.com>,TRUE,student,FALSE,FALSE,TRUE,FALSE,0,FALSE,FALSE,company3
+10,Jane,<recipiant@provider.com>,TRUE,industry,FALSE,FALSE,FALSE,FALSE,0,TRUE,TRUE,company1
+11,John,<recipiant@provider.com>,TRUE,academic,FALSE,FALSE,FALSE,FALSE,0,TRUE,FALSE,company2
+12,Jane,<recipiant@provider.com>,TRUE,student,TRUE,TRUE,TRUE,TRUE,20,TRUE,TRUE,company3
