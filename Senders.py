@@ -31,4 +31,4 @@ class SMTPSender(object):
         msg.attach(MIMEText(body, 'html'))
         text = msg.as_string()
 
-        self.server.sendmail(email, self.sender, text)
+        self.server.sendmail(self.sender, email, text)
