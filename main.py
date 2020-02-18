@@ -31,6 +31,8 @@ class Tracking:
 def parse_args(args_to_parse):
     parser = argparse.ArgumentParser(description='Send out bulk emails to applicants.')
     parser.add_argument('-c', '--config', type=str, help='path to configuration file')
+    parser.add_argument('-r', '--responses', type=str, help='path to responses directory')
+    parser.add_argument('-a', '--applicants', type=str, help='path to applicants csv file')
 
     return parser.parse_args(args_to_parse)
 
@@ -40,7 +42,7 @@ def main(args):
     config = load_config(args.config)
 
     logging.info("Loading applications")
-    applications = load_applicants(config['infile'])
+    applications = load_applicants(args.applicants)
 
     sender = SMTPSender(config['admin']['email'], config['admin']['password'], config['admin']['email_subject'])
     tracking_messages = []
@@ -49,10 +51,10 @@ def main(args):
         for idx in range(len(applications)):
             message_tracker = Tracking(idx=applications.iloc[idx, :]['idx'])
 
-            firstname = applications.iloc[idx, :]['full_name'].strip().split(" ")[0]
             # build base email and introduction
-            message = Message(os.path.join("responses", config['base_email']['filename']), config['base_email']['start_tag'])
-            message.add_component(os.path.join("responses", config['introduction']['filename']), config['introduction']['title'], level="H1", fields=["name"], values=[firstname])
+            message = Message(os.path.join(args.responses, config['base_email']['filename']), config['base_email']['start_tag'])
+            message.add_component(os.path.join(args.responses, config['introduction']['filename']), config['introduction']['title'],
+                                                level="H1", fields=config['introduction']['replace_tags'], values=applications.iloc[idx, :][config['introduction']['replace_values']].values)
             # check all components corresponding to an individual
             # 1) is the component set to true?
             # 2) if yes, are all conditional fields true?
@@ -62,9 +64,10 @@ def main(args):
                 conditionals = applications.iloc[idx, :][config['responses'][response_type]['conditional']].values
                 if all(conditionals):
                     if applications.iloc[idx, :][response_type]:
-                        message.add_component(os.path.join("responses", config['responses'][response_type]['true_filename']), config['responses'][response_type]['title'])
+                        message.add_component(os.path.join(args.responses, config['responses'][response_type]['true_filename']), config['responses'][response_type]['title'],
+                                                fields=config['responses'][response_type]['replace_tags'], values=applications.iloc[idx, :][config['responses'][response_type]['replace_values']].values)
                     else:
-                        message.add_component(os.path.join("responses", config['responses'][response_type]['false_filename']), config['responses'][response_type]['title'])
+                        message.add_component(os.path.join(args.responses, config['responses'][response_type]['false_filename']), config['responses'][response_type]['title'])
                 else:
                     logging.debug("ID %s, response type %s does not meet conditional criteria to be sent, leaving section off of email", applications.iloc[idx, :]['idx'], response_type)
 
