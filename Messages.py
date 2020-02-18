@@ -26,18 +26,18 @@ class Message(object):
         tag.string = text
         self.start_tag.append(tag)
 
-    def add_component(self, filename: str, title: str = None, level: str = "H3", fields: List[str] = None, values: List[str] = None):
+    def add_component(self, filename: str, title: str = None, level: str = "H3", fields: List[str] = [], values: List[str] = []):
         if title is not None:
             self._add_field(title, level)
 
         paragraph = read_html(filename)
 
-        if fields is not None:
+        if fields:
             if len(fields) != len(values):
                 raise RuntimeError("Replacement fields and values are of different length")
             for idx, field in enumerate(fields):
                 field_id = paragraph.find(id=field)
-                field_id.contents[0].replace_with(values[idx])
+                field_id.contents[0].replace_with(str(values[idx]))
 
         self.start_tag.append(paragraph)
 
