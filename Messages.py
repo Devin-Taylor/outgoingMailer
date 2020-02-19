@@ -37,7 +37,8 @@ class Message(object):
                 raise RuntimeError("Replacement fields and values are of different length")
             for idx, field in enumerate(fields):
                 field_id = paragraph.find(id=field)
-                field_id.contents[0].replace_with(str(values[idx]))
+                if field_id is not None:
+                    field_id.contents[0].replace_with(str(values[idx]))
 
         self.start_tag.append(paragraph)
 

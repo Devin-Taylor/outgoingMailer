@@ -11,15 +11,18 @@ import yaml
 from Messages import Message
 from Senders import SMTPSender
 
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
+
 
 def load_applicants(filename: str) -> pd.DataFrame:
     return pd.read_csv(filename)
+
 
 def load_config(filename: str) -> Dict:
     with open(filename, "r") as fd:
         config = yaml.load(fd, Loader=yaml.FullLoader)
     return config
+
 
 @dataclass
 class Tracking:
@@ -28,13 +31,19 @@ class Tracking:
     sent: bool = False
     reason: str = ""
 
+
 def parse_args(args_to_parse):
-    parser = argparse.ArgumentParser(description='Send out bulk emails to applicants.')
-    parser.add_argument('-c', '--config', type=str, help='path to configuration file')
-    parser.add_argument('-r', '--responses', type=str, help='path to responses directory')
-    parser.add_argument('-a', '--applicants', type=str, help='path to applicants csv file')
+    parser = argparse.ArgumentParser(
+        description='Send out bulk emails to applicants.')
+    parser.add_argument('-c', '--config', type=str,
+                        help='path to configuration file')
+    parser.add_argument('-r', '--responses', type=str,
+                        help='path to responses directory')
+    parser.add_argument('-a', '--applicants', type=str,
+                        help='path to applicants csv file')
 
     return parser.parse_args(args_to_parse)
+
 
 def main(args):
 
@@ -44,59 +53,62 @@ def main(args):
     logging.info("Loading applications")
     applications = load_applicants(args.applicants)
 
-    sender = SMTPSender(config['admin']['email'], config['admin']['password'], config['admin']['email_subject'])
+    sender = SMTPSender(config['admin']['email'], config['admin']
+                        ['password'], config['admin']['email_subject'])
     tracking_messages = []
 
     try:
         for idx in range(len(applications)):
+            # just to save for review
             message_tracker = Tracking(idx=applications.iloc[idx, :]['idx'])
 
             # build base email and introduction
             message = Message(os.path.join(args.responses, config['base_email']['filename']), config['base_email']['start_tag'])
-            message.add_component(os.path.join(args.responses, config['introduction']['filename']), config['introduction']['title'],
-                                                level="H1", fields=config['introduction']['replace_tags'], values=applications.iloc[idx, :][config['introduction']['replace_values']].values)
-            # check all components corresponding to an individual
-            # 1) is the component set to true?
-            # 2) if yes, are all conditional fields true?
-            # 3) if yes, are all conflicting fields false?
+
+            # iterate over all applicants and build the remainder of their message
             for response_type in config['responses'].keys():
-                # conflicts = [not x for x in applications.iloc[idx, :][config['responses'][response_type]['conflict']].values]
-                conditionals = applications.iloc[idx, :][config['responses'][response_type]['conditional']].values
-                if all(conditionals):
+                foi = config['responses'][response_type] # extract field of interest of neatness
+                # flip conflicts otherwise all(empty list) is true and breaks the below check
+                conflicts = [not x for x in applications.iloc[idx, :][foi['conflict']].values]
+                conditionals = applications.iloc[idx, :][foi['conditional']].values
+
+                if all(conditionals) and all(conflicts): # read as "and not all(conflicts)"
                     if applications.iloc[idx, :][response_type]:
-                        message.add_component(os.path.join(args.responses, config['responses'][response_type]['true_filename']), config['responses'][response_type]['title'],
-                                                fields=config['responses'][response_type]['replace_tags'], values=applications.iloc[idx, :][config['responses'][response_type]['replace_values']].values)
+                        if foi['true_filename'] is not None:
+                            message.add_component(os.path.join(args.responses, foi['true_filename']),
+                                                                foi['title'], fields=foi['replace_tags'],
+                                                                values=applications.iloc[idx, :][foi['replace_values']].values)
                     else:
-                        message.add_component(os.path.join(args.responses, config['responses'][response_type]['false_filename']), config['responses'][response_type]['title'])
+                        if foi['false_filename'] is not None:
+                            message.add_component(os.path.join(args.responses, foi['false_filename']),
+                                                                foi['title'], fields=foi['replace_tags'],
+                                                                values=applications.iloc[idx, :][foi['replace_values']].values)
                 else:
-                    logging.debug("ID %s, response type %s does not meet conditional criteria to be sent, leaving section off of email", applications.iloc[idx, :]['idx'], response_type)
+                    logging.debug("ID %s, response type %s does not meet conditional criteria to be sent, leaving section off of email",
+                                  applications.iloc[idx, :]['idx'], response_type)
 
             message_tracker.message = message.to_string()
             try:
                 logging.debug("Sending message to %s: %s", applications.iloc[idx, :]['email'], message.to_string())
-                sender.send_message(message.to_string(), applications.iloc[idx, :]['email'])
+                sender.send_message(message.to_string(),
+                                    applications.iloc[idx, :]['email'])
                 message_tracker.sent = True
+                logging.info("Message sent for idx=%s", applications.iloc[idx, :]['idx'])
             except Exception as e:
-                # bad practice but not sure what exception is thrown
+                # bad practice but not sure what exception is thrown when message could not be sent and not sure what else could come up
+                # don't want to lose track of what happens
                 message_tracker.reason = "Unable to send email " + repr(e)
 
             tracking_messages.append(asdict(message_tracker))
-
-        tracking_messages_df = pd.DataFrame(tracking_messages)
-        tracking_messages_df.to_csv("completed.csv")
-        print(tracking_messages_df)
-
         sender.logout()
 
     except Exception as e:
         logging.error(repr(e))
-        # make sure we save progress if anything crashes
         tracking_messages.append(asdict(message_tracker))
-        tracking_messages_df = pd.DataFrame(tracking_messages)
-        tracking_messages_df.to_csv("completed.csv")
-        print(tracking_messages_df)
 
-
+    tracking_messages_df = pd.DataFrame(tracking_messages)
+    tracking_messages_df.to_csv("completed.csv")
+    print(tracking_messages_df)
 
 if __name__ == "__main__":
     parsed_args = parse_args(sys.argv[1:])
