@@ -31,45 +31,63 @@ admin:
     email_subject: Your Amazing Conference
 base_email:
     filename: base.html
-    start_tag: startpt
-introduction:
-    title:
-    filename: introduction.html
-    replace_tags: [name]
-    replace_values: [firstname]
+    start_tag:
 responses:
     accept:
-        title: Application Response
+        title:
         true_filename: accept.html
         false_filename: reject.html
         conditional: []
         conflict: []
-        replace_tags: [profession]
-        replace_values: [profession]
+        replacements:
+            name:
+                value: firstname
+                params:
+            response_link:
+                value:
+                params:
+                    href: response_link
     travel:
         title: Travel Grant
         true_filename: travel_accepted.html
         false_filename: travel_rejected.html
         conditional: [travel_applied, accept]
         conflict: []
-        replace_tags: [sponsor]
-        replace_values: [sponsor]
+        replacements:
+            bursary_name:
+                value: bursary_name
+                params:
+            sponsor:
+                value: sponsor
+                params:
+            response_link:
+                value:
+                params:
+                    href: response_link
     talk:
         title: Talk
         true_filename: talk_accepted.html
         false_filename: talk_rejected.html
         conditional: [talk_applied, accept]
         conflict: []
-        replace_tags: [talk_length]
-        replace_values: [talk_length]
+        replacements:
+            talk_length:
+                value: talk_length
+                params:
     poster:
         title: Poster
         true_filename: poster_accepted.html
         false_filename: poster_rejected.html
         conditional: [poster_applied, accept]
         conflict: []
-        replace_tags: []
-        replace_values: []
+        replacements:
+    waitlist:
+        title: Waitlist
+        true_filename: waitlist.html
+        false_filename:
+        conditional: []
+        conflict: [accept]
+        replacements:
 ```
 
 The following is a definition of the main fields:
@@ -81,6 +99,11 @@ The following is a definition of the main fields:
 | responses  | -           | all possible independent reponses                                                     |
 |            | title       | title of section in email                                                             |
 |            | conditional | boolean columns in csv file which this field is conditional on (i.e. need to be true) |
+|            | conflicts   | boolean columns in csv file which this field conflicts with                           |
+|            | replacements | list of fields and tag parameters to replace with dynamic variables |
+|            | value | value to replace field value with (i.e. the value that will be displayed) |
+|            | params | pairs of (param : replacement value) |
+
 
 `responses/`: directory containing all `.html` files corresponding to the responses defined in `config.yaml`. Located in the root directory. Text must be contained within `<p></p>` braces and can contain any standard HTML formatting.
 
