@@ -6,6 +6,8 @@ An example of this is - Did the applicant apply for a travel grant? If so, was t
 
 ### How it works
 
+As much logic as possible has been abstracted into the config file. This file defines each section that needs to be added to the email, the conditional section that need to be met in order for that field to be included, the conflicting sections that need to be checked before adding the section, the dynamic fields and HTML tag parameters that need to be replaced on a applicant-by-applicant basis.
+
 In order to work the following files need to be generated:
 
 `<your_applicants_file>.csv`: Defines applicants names and emails addresses, and each of the categories that need to be responded to. The columns must correspond to the fields in the `config.yaml` file.
