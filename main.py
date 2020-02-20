@@ -8,8 +8,8 @@ from typing import Dict
 import pandas as pd
 import yaml
 
-from Messages import Message
-from Senders import SMTPSender
+from mailer.Messages import Message
+from mailer.Senders import SMTPSender
 
 logging.basicConfig(level=logging.INFO)
 
