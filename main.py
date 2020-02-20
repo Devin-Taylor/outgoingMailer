@@ -106,7 +106,6 @@ def main(args):
 
     tracking_messages_df = pd.DataFrame(tracking_messages)
     tracking_messages_df.to_csv("completed.csv")
-    print(tracking_messages_df)
 
 if __name__ == "__main__":
     parsed_args = parse_args(sys.argv[1:])
