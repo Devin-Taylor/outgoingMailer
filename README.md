@@ -1,7 +1,5 @@
 # WIP: outgoingMailer
 
-This application was specifically developed for the [IndabaX South Africa](https://indabax.co.za/) conference.
-
 An outgoing mailing server targeted at conferences that have to send responses to applicants but the contents of the email changes based on criteria specific to each applicant.
 
 An example of this is - Did the applicant apply for a travel grant? If so, was the travel grant approved or denied?
