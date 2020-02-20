@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from bs4 import BeautifulSoup
 
@@ -26,19 +26,21 @@ class Message(object):
         tag.string = text
         self.start_tag.append(tag)
 
-    def add_component(self, filename: str, title: str = None, level: str = "H3", fields: List[str] = [], values: List[str] = []):
+    def add_component(self, filename: str, title: str, replacements: Dict[str, Dict[str, str]], applicant: Dict[str, str], level: str = "H3"):
         if title is not None:
             self._add_field(title, level)
 
         paragraph = read_html(filename)
 
-        if fields:
-            if len(fields) != len(values):
-                raise RuntimeError("Replacement fields and values are of different length")
-            for idx, field in enumerate(fields):
+        if replacements is not None:
+            for field, vals in replacements.items():
                 field_id = paragraph.find(id=field)
                 if field_id is not None:
-                    field_id.contents[0].replace_with(str(values[idx]))
+                    if vals.get('value') is not None:
+                        field_id.contents[0].replace_with(str(applicant.get(vals.get('value'))))
+                    if vals.get('params') is not None:
+                        for param, rep in vals.get('params').items():
+                            field_id[param] = str(applicant.get(rep))
 
         self.start_tag.append(paragraph)
 

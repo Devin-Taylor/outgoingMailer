@@ -75,14 +75,12 @@ def main(args):
                 if all(conditionals) and all(conflicts): # read as "and not all(conflicts)"
                     if applications.iloc[idx, :][response_type]:
                         if foi['true_filename'] is not None:
-                            message.add_component(os.path.join(args.responses, foi['true_filename']),
-                                                                foi['title'], fields=foi['replace_tags'],
-                                                                values=applications.iloc[idx, :][foi['replace_values']].values)
+                            message.add_component(os.path.join(args.responses, foi['true_filename']), foi['title'],
+                                                    foi['replacements'], applications.iloc[idx, :].to_dict())
                     else:
                         if foi['false_filename'] is not None:
-                            message.add_component(os.path.join(args.responses, foi['false_filename']),
-                                                                foi['title'], fields=foi['replace_tags'],
-                                                                values=applications.iloc[idx, :][foi['replace_values']].values)
+                            message.add_component(os.path.join(args.responses, foi['false_filename']), foi['title'],
+                                                    foi['replacements'], applications.iloc[idx, :].to_dict())
                 else:
                     logging.debug("ID %s, response type %s does not meet conditional criteria to be sent, leaving section off of email",
                                   applications.iloc[idx, :]['idx'], response_type)
