@@ -1,4 +1,4 @@
-# WIP: outgoingMailer
+# outgoingMailer
 
 An outgoing mailing server targeted at conferences that have to send responses to applicants but the contents of the email changes based on criteria specific to each applicant.
 
