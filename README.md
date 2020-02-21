@@ -1,12 +1,12 @@
-# WIP: outgoingMailer
-
-This application was specifically developed for the [IndabaX South Africa](https://indabax.co.za/) conference.
+# outgoingMailer
 
 An outgoing mailing server targeted at conferences that have to send responses to applicants but the contents of the email changes based on criteria specific to each applicant.
 
 An example of this is - Did the applicant apply for a travel grant? If so, was the travel grant approved or denied?
 
 ### How it works
+
+As much logic as possible has been abstracted into the config file. This file defines each section that needs to be added to the email, the conditional sections that need to exist in order for that section to be included, the conflicting sections that need to be checked before adding the section, and the dynamic fields and HTML tag parameters that need to be replaced on a applicant-by-applicant basis.
 
 In order to work the following files need to be generated:
 
