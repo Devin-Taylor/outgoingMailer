@@ -54,7 +54,8 @@ def main(args):
     applications = load_applicants(args.applicants)
 
     sender = SMTPSender(config['admin']['email'], config['admin']
-                        ['password'], config['admin']['email_subject'])
+                        ['password'], config['admin']['email_subject'],
+                        config['admin']['display_email'], config['admin']['display_name'])
     tracking_messages = []
 
     try:
@@ -96,6 +97,7 @@ def main(args):
                 # bad practice but not sure what exception is thrown when message could not be sent and not sure what else could come up
                 # don't want to lose track of what happens
                 message_tracker.reason = "Unable to send email " + repr(e)
+                logging.error(repr(e))
 
             tracking_messages.append(asdict(message_tracker))
         sender.logout()
